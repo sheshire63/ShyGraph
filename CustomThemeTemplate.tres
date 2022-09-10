@@ -1,0 +1,27 @@
+[gd_resource type="Theme" format=2]
+
+[resource]
+ShyCanvas/colors/grid_major_line_color = Color( 0, 0, 0, 1 )
+ShyCanvas/colors/grid_minor_line_color = Color( 0, 0, 0, 1 )
+ShyCanvas/colors/ruler_font_color = Color( 0, 0, 0, 1 )
+ShyCanvas/colors/ruler_line_color = Color( 0, 0, 0, 1 )
+ShyCanvas/constants/grid_major_line_width = 0
+ShyCanvas/constants/grid_minor_line_width = 0
+ShyCanvas/constants/grid_step = 0
+ShyCanvas/constants/grid_substeps = 0
+ShyCanvas/constants/max_scale = 0
+ShyCanvas/constants/min_scale = 0
+ShyCanvas/constants/ruler_line_width = 0
+ShyCanvas/constants/ruler_widht = 0
+ShyCanvas/fonts/ruler_font = null
+ShyCanvas/styles/bg = null
+ShyGraphEdit/colors/break_line_color = Color( 0, 0, 0, 1 )
+ShyGraphEdit/colors/selection_fill_color = Color( 0, 0, 0, 1 )
+ShyGraphEdit/colors/selection_stroke_color = Color( 0, 0, 0, 1 )
+ShyGraphEdit/constants/break_line_width = 0
+ShyGraphEdit/constants/line_width = 0
+ShyGraphEdit/constants/selection_stroke_width = 0
+ShyGraphNode/icons/close = null
+ShyGraphNode/icons/resize = null
+ShyGraphNode/styles/background = null
+ShyGraphNode/styles/background_selected = null

@@ -1,0 +1,97 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/ShyGraph/Inspector/TypeControl.gd" type="Script" id=2]
+
+[node name="TypeControl" type="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 20 )
+script = ExtResource( 2 )
+
+[node name="Show" type="Button" parent="."]
+anchor_right = 1.0
+margin_bottom = 20.0
+toggle_mode = true
+
+[node name="Box" type="VBoxContainer" parent="."]
+visible = false
+anchor_right = 1.0
+margin_top = 25.0
+
+[node name="Name" type="LineEdit" parent="Box"]
+margin_right = 1024.0
+margin_bottom = 24.0
+
+[node name="Color" type="ColorPickerButton" parent="Box"]
+margin_top = 28.0
+margin_right = 1024.0
+margin_bottom = 48.0
+
+[node name="Size" type="Control" parent="Box"]
+margin_top = 52.0
+margin_right = 1024.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 107, 48 )
+
+[node name="X" type="SpinBox" parent="Box/Size"]
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = 34.0
+min_value = 1.0
+max_value = 64.0
+value = 1.0
+rounded = true
+allow_greater = true
+prefix = "X: "
+suffix = "px"
+
+[node name="Y" type="SpinBox" parent="Box/Size"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 34.0
+min_value = 1.0
+max_value = 64.0
+value = 1.0
+rounded = true
+allow_greater = true
+prefix = "Y: "
+suffix = "px"
+
+[node name="Label" type="Label" parent="Box/Size"]
+anchor_bottom = 1.0
+text = "Size: "
+valign = 1
+
+[node name="Multiple" type="CheckBox" parent="Box"]
+margin_top = 104.0
+margin_right = 1024.0
+margin_bottom = 128.0
+text = "Multiple"
+align = 1
+
+[node name="SameSide" type="CheckBox" parent="Box"]
+margin_top = 132.0
+margin_right = 1024.0
+margin_bottom = 156.0
+text = "Connect to same Side"
+align = 1
+
+[node name="Label" type="Label" parent="Box"]
+margin_top = 160.0
+margin_right = 1024.0
+margin_bottom = 174.0
+text = "Connections"
+
+[node name="Connect2" type="VBoxContainer" parent="Box"]
+margin_top = 178.0
+margin_right = 1024.0
+margin_bottom = 178.0
+
+[connection signal="toggled" from="Show" to="." method="_on_Show_toggled"]
+[connection signal="text_changed" from="Box/Name" to="." method="_on_Name_text_changed"]
+[connection signal="color_changed" from="Box/Color" to="." method="_on_Color_color_changed"]
+[connection signal="value_changed" from="Box/Size/X" to="." method="_on_X_value_changed"]
+[connection signal="value_changed" from="Box/Size/Y" to="." method="_on_Y_value_changed"]
+[connection signal="toggled" from="Box/Multiple" to="." method="_on_Multiple_toggled"]
+[connection signal="toggled" from="Box/SameSide" to="." method="_on_SameSide_toggled"]
