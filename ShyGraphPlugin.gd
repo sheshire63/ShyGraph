@@ -118,7 +118,7 @@ func laod_nodes_from_folder() -> void:#todo add undo?
 				if not file_path.get_extension() in ["tscn", "scn"]:
 					file_path = dir.get_next()
 					continue
-				var new = load(node_folder + "/" + file_path).instance()
+				var new = load(node_folder + "/" + file_path).instance(3)
 				if new and new is ShyGraphNode:
 					if object.has_node(new.name):
 						var old: Node = object.get_node(new.name)
