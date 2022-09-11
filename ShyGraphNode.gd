@@ -28,7 +28,6 @@ export var resize := true
 
 var offset := Vector2.ZERO setget _set_offset; func _set_offset(new):
 		offset = new
-		printt(owner)
 		if owner: #check if we are in editor
 			return
 		_update_position()
