@@ -370,6 +370,8 @@ func _clear_slots() -> void:
 
 func _setup_slots() -> void:
 	for i in slots.size():
+		if slots[i] == null:
+				slots[i] = {}
 		slots[i].merge(new_slot())
 		_add_slot_control(slots[i], i)
 
