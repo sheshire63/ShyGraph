@@ -1,5 +1,5 @@
 tool
-extends Control
+extends Container
 
 class_name ShyGraphNode
 
@@ -28,7 +28,8 @@ export var resize := true
 
 var offset := Vector2.ZERO setget _set_offset; func _set_offset(new):
 		offset = new
-		if !owner or (Engine.editor_hint and owner.get_parent() is Viewport):
+		printt(owner)
+		if owner: #check if we are in editor
 			return
 		_update_position()
 		emit_signal("offset_changed", offset)
@@ -45,7 +46,6 @@ var _is_moving := false
 var _moved_from: Vector2
 var _resize_button: Button
 var _titel_offset := 0.0
-var _rect_min_size := Vector2.ZERO
 
 
 # flow
@@ -80,16 +80,13 @@ func _ready() -> void:
 		_add_resize_button()
 
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		if _resize_button and _resize_button.pressed:
-			_resize(event.relative)
-
-
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(BUTTON_LEFT):
-			_move(event.relative)
+			if _resize_button and _resize_button.pressed:
+				_resize(event.relative)
+			else:
+				_move(event.relative)
 	if event is InputEventMouseButton:
 		match event.button_index:
 			BUTTON_LEFT:
@@ -106,6 +103,8 @@ func _notification(what: int) -> void:
 			for i in _slot_controls:
 				_slot_controls[i].update_position()
 			get_parent().update()
+		NOTIFICATION_SORT_CHILDREN:
+			update_min_size()
 
 
 func _draw() -> void:
@@ -119,14 +118,14 @@ func _draw() -> void:
 
 # override
 
-func add_child(new: Node, legible_unique_name := false) -> void:
-	.add_child(new, legible_unique_name)
-	update_min_size()
+#func add_child(new: Node, legible_unique_name := false) -> void:
+#	.add_child(new, legible_unique_name)
+#	update_min_size()
 
 
-func remove_child(node: Node) -> void:
-	.remove_child(node)
-	update_min_size()
+#func remove_child(node: Node) -> void:
+#	.remove_child(node)
+#	update_min_size()
 
 
 
@@ -178,13 +177,13 @@ func update_min_size() -> void:
 	for i in get_children():
 		if i is SlotButton or not i is Control:
 			continue
-		rect = rect.expand(i.get_rect().end)
-	_rect_min_size = rect.end
+		rect = rect.expand(i.rect_size + Vector2(i.margin_left - i.margin_right, i.margin_top - i.margin_bottom))
+	rect_size = rect.end
 	_resize()
 
 
-#slot functions----------------------------------------------------
 
+#slot functions----------------------------------------------------
 
 func new_slot(active := true, offset := Vector2.ZERO, size := Vector2.ONE, anchor := "", type := 0, allign := 1, side := 0) -> Dictionary:
 	return {
@@ -458,6 +457,7 @@ func _add_resize_button() -> void:
 	_resize_button = Button.new()
 	_resize_button.flat = true
 	_resize_button.icon = _get_resize_icon()
+	_resize_button.mouse_filter = MOUSE_FILTER_PASS
 	_resize_button.set_anchors_preset(PRESET_BOTTOM_RIGHT)
 	add_child(_resize_button)
 	_resize_button.margin_top = -_resize_button.rect_size.y
@@ -465,8 +465,8 @@ func _add_resize_button() -> void:
 
 
 func _resize(change := Vector2.ZERO) -> void:
-	rect_min_size += change
-	rect_min_size = Vector2(max(_rect_min_size.x, rect_min_size.x), max(_rect_min_size.y, rect_min_size.y))
+	rect_size += change
+	rect_size = Vector2(max(rect_min_size.x, rect_size.x), max(rect_min_size.y, rect_size.y))
 	update()
 
 
