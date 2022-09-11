@@ -43,6 +43,7 @@ var _is_moving := false
 var _moved_from: Vector2
 var _resize_button: Button
 var _titel_offset := 0.0
+var _rect_min_size := Vector2.ZERO
 
 
 # flow
@@ -64,7 +65,6 @@ func _get_property_list() -> Array:
 
 
 func _init() -> void:
-	rect_min_size = Vector2(max(64, rect_min_size.x), max(64, rect_min_size.y))
 	focus_mode = Control.FOCUS_CLICK
 	
 
@@ -81,8 +81,7 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		if _resize_button and _resize_button.pressed:
-			rect_min_size += event.relative
-			update()
+			_resize(event.relative)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -113,6 +112,19 @@ func _draw() -> void:
 		draw_style_box(_get_bg_selected() , Rect2(Vector2(0, -_titel_offset), rect_size + Vector2(0, _titel_offset)))
 	else:
 		draw_style_box(_get_background(), Rect2(Vector2(0, -_titel_offset), rect_size + Vector2(0, _titel_offset)))
+
+
+
+# override
+
+func add_child(new: Node, legible_unique_name := false) -> void:
+	.add_child(new, legible_unique_name)
+	update_min_size()
+
+
+func remove_child(node: Node) -> void:
+	.remove_child(node)
+	update_min_size()
 
 
 
@@ -157,6 +169,16 @@ func copy():
 func delete() -> void:
 	_delete()
 	emit_signal("request_delete")
+
+
+func update_min_size() -> void:
+	var rect = Rect2(Vector2.ZERO, Vector2(64, 64))
+	for i in get_children():
+		if i is SlotButton or not i is Control:
+			continue
+		rect = rect.expand(i.get_rect().end)
+	_rect_min_size = rect.end
+	_resize()
 
 
 #slot functions----------------------------------------------------
@@ -420,8 +442,6 @@ func _add_titel_bar() -> void:
 	control.text = name
 	add_child(control)
 
-	rect_min_size.x = max(rect_min_size.x, control.rect_size.x + close_button.rect_size.x)
-
 	_titel_offset = max(control.rect_size.y, close_button.rect_size.y)
 	close_button.set_anchors_preset(PRESET_TOP_RIGHT)
 	close_button.margin_top = -_titel_offset
@@ -441,6 +461,12 @@ func _add_resize_button() -> void:
 	_resize_button.margin_left = -_resize_button.rect_size.x
 
 
+func _resize(change := Vector2.ZERO) -> void:
+	rect_min_size += change
+	rect_min_size = Vector2(max(_rect_min_size.x, rect_min_size.x), max(_rect_min_size.y, rect_min_size.y))
+	update()
+
+
 
 # theme
 
@@ -451,6 +477,7 @@ func _get_background() -> StyleBox:
 	bg.bg_color = Color(0.2,0.2,0.2)
 	return bg
 
+
 func _get_bg_selected() -> StyleBox:
 	if has_stylebox("background_selected", ""):
 		return get_stylebox("background_selected", "")
@@ -458,12 +485,15 @@ func _get_bg_selected() -> StyleBox:
 	bg_selected.bg_color = Color(0.3,0.3,0.3)
 	return bg_selected
 
+
 func _get_close_icon() -> Texture:
 	if has_icon("close", ""):
 		return get_icon("close", "")
 	return get_icon("close", "GraphNode")
 
+
 func _get_resize_icon() -> Texture:
 	if has_icon("resize", ""):
 		return get_icon("resize", "")
 	return get_icon("resizer", "GraphNode")
+
