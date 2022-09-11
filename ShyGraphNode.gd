@@ -28,6 +28,8 @@ export var resize := true
 
 var offset := Vector2.ZERO setget _set_offset; func _set_offset(new):
 		offset = new
+		if !owner or (Engine.editor_hint and owner.get_parent() is Viewport):
+			return
 		_update_position()
 		emit_signal("offset_changed", offset)
 var slots := [] setget _set_slots
@@ -375,6 +377,7 @@ func _setup_slots() -> void:
 
 
 func _update_position() -> void:
+
 	var new: Vector2
 	if get_parent() and get_parent().has_method("offset_to_position"):
 		new = get_parent().offset_to_position(offset)
