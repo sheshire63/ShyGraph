@@ -145,6 +145,16 @@ func _draw() -> void:
 
 
 
+# virtual
+
+func _connection_added(connection) -> void:
+	pass
+
+
+func _connection_removed(connection) -> void:
+	pass
+
+
 # puplic
 
 func clear() -> void:
@@ -551,11 +561,11 @@ func _end_select_drag() -> void:
 	update()
 
 
-func _is_connection_allowed(from: Dictionary, to: Dictionary) -> bool:
+func _is_connection_allowed(from: Dictionary, to: Dictionary, to_node_override = null) -> bool:
 	if from.hash() == to.hash():#prevent connection to self
 		return false
 	var from_slot = get_node(from.node).get_slot(from.slot)
-	var to_slot = get_node(to.node).get_slot(to.slot)
+	var to_slot = (to_node_override if to_node_override else get_node(to.node)).get_slot(to.slot)
 	var conns = types[from_slot.type].connections
 	if from_slot.side == to_slot.side:
 		if !types[from_slot.type].same_side or !types[to_slot.type].same_side:
@@ -617,6 +627,10 @@ func _add_connection(connection: Dictionary) -> void:
 	if !types[to_slot.type].multiple:
 		_disconnect_slot(connection.to.node, connection.to.slot)
 	connections.append(connection)
+
+	from_node.emit_signal("connected", connection.from.slot, connection.to.node, connection.to.slot)
+	to_node.emit_signal("connected", connection.to.slot, connection.from.node, connection.from.slot)
+	_connection_added(connection)
 	update()
 
 
@@ -624,6 +638,11 @@ func _remove_connection(connection: Dictionary) -> void:
 	for i in connections:
 		if i.hash() == connection.hash():
 			connections.erase(i)
+
+	_connection_removed(connection)
+	get_node(connection.from.node).emit_signal("disconnected", connection.from.slot, connection.to.node, connection.to.slot)
+	get_node(connection.to.node).emit_signal("disconnected", connection.to.slot, connection.from.node, connection.from.slot)
+
 	update()
 
 
@@ -712,6 +731,7 @@ func _translate_nodes(nodes: Array, offset: Vector2) -> void:
 	for i in nodes:
 		i.offset += offset
 
+
 var _connect_to_empty_data := {}
 func _connect_to_empty() -> void:
 	var _nodes := {}
@@ -719,7 +739,7 @@ func _connect_to_empty() -> void:
 	for i in nodes:
 		for j in nodes[i].slots.size():
 			var to := {"node": i, "slot": j}
-			if _is_connection_allowed(_create_connection_from, to):
+			if _is_connection_allowed(_create_connection_from, to, nodes[i]):
 				_nodes[i] = nodes[i]
 				conns.append(to)
 				break

@@ -13,6 +13,8 @@ signal selected
 signal deselected
 signal request_delete
 signal rename(old, new)
+signal connected(slot, to, to_slot)
+signal disconnected(slot, from, from_slot)
 
 signal _request_select()
 
@@ -179,7 +181,6 @@ func update_min_size() -> void:
 		rect = rect.expand(i.rect_size + Vector2(i.margin_left - i.margin_right, i.margin_top - i.margin_bottom))
 	rect_size = rect.end
 	_resize()
-
 
 
 #slot functions----------------------------------------------------
