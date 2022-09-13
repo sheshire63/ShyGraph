@@ -34,8 +34,6 @@ func _set_type(new):
 var edit : ShyGraphEdit setget _set_edit
 func _set_edit(new):
 	edit = new
-	if !is_inside_tree() or !new:
-		return
 
 
 func _ready() -> void:
@@ -106,7 +104,7 @@ func _on_Show_toggled(button_pressed: bool) -> void:
 		rect_min_size.y = c_show.rect_size.y
 
 func set_label(label: String) -> void:
-	c_show.text = type.name
+	c_show.text = label + "|" + type.name
 
 
 func _on_connect_to_toggled(pressed: bool, id: int) -> void:

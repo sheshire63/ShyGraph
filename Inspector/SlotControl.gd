@@ -3,6 +3,7 @@ extends Control
 
 signal changed
 
+onready var c_name := $Box/Name
 onready var c_active := $Box/Active
 onready var c_type := $Box/Type
 onready var c_side := $Box/Side
@@ -21,6 +22,7 @@ func _set_slot(new):
 	slot = new
 	if !is_inside_tree():
 		return
+	c_name.text = slot.name
 	c_active.pressed = slot.active
 	c_type.selected = slot.type
 	c_side.selected = slot.side
@@ -34,8 +36,6 @@ func _set_slot(new):
 var node : ShyGraphNode setget _set_node
 func _set_node(new):
 	node = new
-	if !is_inside_tree():
-		return
 
 
 func _ready() -> void:	
@@ -52,6 +52,7 @@ func _ready() -> void:
 	# 	if ! i is SlotButton:
 	# 		c_anchor.add_item(i.name)
 	_set_slot(slot)
+	c_name.connect("text_changed", self, "_on_name_changed")
 	c_active.connect("toggled", self, "_on_active_toggled")
 	c_type.connect("item_selected", self, "_on_type_item_selected")
 	c_side.connect("item_selected", self, "_on_side_item_selected")
@@ -62,6 +63,11 @@ func _ready() -> void:
 	c_size_x.connect("value_changed", self, "_on_size_x_value_changed")
 	c_size_y.connect("value_changed", self, "_on_size_y_value_changed")
 	rect_min_size.y = c_show.rect_size.y
+
+
+func _on_name_changed(new: String) -> void:
+	slot.name = new
+	updata_slot()
 
 
 func _on_active_toggled(button_pressed: bool) -> void:
@@ -122,4 +128,4 @@ func _on_Show_toggled(button_pressed: bool) -> void:
 
 
 func set_label(label: String) -> void:
-	c_show.text = "Slot %s" %[label]
+	c_show.text = label + "|" + slot.name

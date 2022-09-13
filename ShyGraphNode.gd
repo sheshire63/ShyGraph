@@ -185,8 +185,9 @@ func update_min_size() -> void:
 
 #slot functions----------------------------------------------------
 
-func new_slot(active := true, offset := Vector2.ZERO, size := Vector2.ONE, anchor := "", type := 0, allign := 1, side := 0) -> Dictionary:
+func new_slot(name:= "", active := true, offset := Vector2.ZERO, size := Vector2.ONE, anchor := "", type := 0, allign := 1, side := 0) -> Dictionary:
 	return {
+		"name": name,
 		"active": active,
 		"offset": offset,
 		"size": size,
