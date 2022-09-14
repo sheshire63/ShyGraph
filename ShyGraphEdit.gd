@@ -596,6 +596,7 @@ func _clear() -> void:
 	selected_nodes = []
 	for i in get_children():
 		if i is ShyGraphNode:
+			remove_child(i)
 			i.queue_free()
 	_reset()
 
