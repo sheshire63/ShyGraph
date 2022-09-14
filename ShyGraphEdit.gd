@@ -69,6 +69,7 @@ func _get_property_list() -> Array:
 
 
 func _ready() -> void:
+	rect_clip_content = true
 	if !owner or (Engine.editor_hint and owner.get_parent() is Viewport):
 		return
 	node_menu.connect("id_pressed", self, "_on_node_menu_id_pressed")
