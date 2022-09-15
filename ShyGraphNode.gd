@@ -1,5 +1,5 @@
 tool
-extends Container
+extends Control
 
 class_name ShyGraphNode
 
@@ -110,7 +110,7 @@ func _notification(what: int) -> void:
 			for i in _slot_controls:
 				_slot_controls[i].update_position()
 			get_parent().update()
-		NOTIFICATION_SORT_CHILDREN:
+		NOTIFICATION_ENTER_TREE, NOTIFICATION_RESIZED, NOTIFICATION_THEME_CHANGED, NOTIFICATION_VISIBILITY_CHANGED:
 			update_min_size()
 
 
