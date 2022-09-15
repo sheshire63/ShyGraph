@@ -73,8 +73,8 @@ func _draw() -> void:
 	_draw_grid()
 	if ruler:
 		_draw_ruler()
-	draw_set_transform_matrix(transform.affine_inverse())
-	draw_rect(area_rect, Color.green, false)
+	#draw_set_transform_matrix(transform.affine_inverse())
+	#draw_rect(area_rect, Color.green, false)
 
 
 # puplic
