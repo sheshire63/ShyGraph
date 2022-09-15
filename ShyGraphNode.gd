@@ -45,6 +45,8 @@ var selected := false setget _set_selected
 var _slot_controls := {}
 var _is_moving := false
 var _moved_from: Vector2
+var _titel_label : Label
+var _titel_edit: LineEdit
 var _resize_button: Button
 var _titel_offset := 0.0
 
@@ -92,8 +94,11 @@ func _gui_input(event: InputEvent) -> void:
 		match event.button_index:
 			BUTTON_LEFT:
 				if event.pressed:
-					if !selected or Input.is_key_pressed(KEY_CONTROL):
-						emit_signal("_request_select", self)
+					if edit_title and event.doubleclick and event.position.y <0:
+						show_edit_title()
+					else:
+						if !selected or Input.is_key_pressed(KEY_CONTROL):
+							emit_signal("_request_select", self)
 				else:
 					_end_move()
 
@@ -181,6 +186,14 @@ func update_min_size() -> void:
 		rect = rect.expand(i.rect_size + Vector2(i.margin_left - i.margin_right, i.margin_top - i.margin_bottom))
 	rect_size = rect.end
 	_resize()
+
+
+func show_edit_title() -> void:
+	_titel_label.visible = false
+	_titel_edit.text = name
+	_titel_edit.visible = true
+	_titel_edit.grab_focus()
+
 
 
 #slot functions----------------------------------------------------
@@ -292,14 +305,17 @@ func _copy(copy) -> void:#if you need to set somthing in the copy.
 
 # events
 
-func _on_titel_changed(_text: String, sender) -> void:#todo  change to on text entered (focus lost)
-	var text = sender.text
-	if text == "":
-		return
-	var old = name
-	name = text
-	sender.text = name
-	emit_signal("rename", old, name)
+func _on_titel_changed(_text := "") -> void:#todo  change to on text entered (focus lost)
+	var text = _titel_edit.text.validate_node_name()
+	if text != "":
+		var old = name
+		name = text
+		_titel_edit.text = name
+		_titel_label.text = name
+		emit_signal("rename", old, name)
+	_titel_label.visible = true
+	_titel_edit.visible = false
+	_titel_edit.release_focus()
 
 
 # private funcs----------------------------------------------------
@@ -365,9 +381,6 @@ func _clear_slots() -> void:
 		_slot_controls[i].queue_free()
 	_slot_controls = {}
 	slots = []
-	for i in get_children():
-		if i is SlotButton:
-			i.queue_free()
 
 
 func _setup_slots() -> void:
@@ -436,25 +449,29 @@ func _add_titel_bar() -> void:
 		close_button = Control.new()
 	add_child(close_button)
 
-	var control
-	if edit_title:
-		control = LineEdit.new()
-		control.connect("text_entered", self, "_on_titel_changed", [control])
-		control.connect("focus_exited", self, "_on_titel_changed", ["", control])
-	else:
-		control = Label.new()
-		control.mouse_filter = MOUSE_FILTER_PASS
-	control.text = name
-	add_child(control)
+	var control #todo check in inputif doublclick and in titel switch to lineedit
+	_titel_label = Label.new()
+	_titel_label.mouse_filter = MOUSE_FILTER_PASS
+	_titel_label.text = name
+	add_child(_titel_label)
 
-	_titel_offset = max(control.rect_size.y, close_button.rect_size.y)
+	_titel_offset = max(_titel_label.rect_size.y, close_button.rect_size.y)
 	close_button.set_anchors_preset(PRESET_TOP_RIGHT)
 	close_button.margin_top = -_titel_offset
 	close_button.margin_left = -close_button.rect_size.x
-	control.set_anchors_preset(PRESET_TOP_WIDE)
-	control.margin_top = -_titel_offset
-	control.margin_right = -close_button.rect_size.x
+	_titel_label.set_anchors_preset(PRESET_TOP_WIDE)
+	_titel_label.margin_top = -_titel_offset
+	_titel_label.margin_right = -close_button.rect_size.x
 
+	if edit_title:
+		_titel_edit = LineEdit.new()
+		_titel_edit.connect("text_entered", self, "_on_titel_changed")
+		_titel_edit.connect("focus_exited", self, "_on_titel_changed")
+		_titel_edit.visible = false
+		_titel_edit.set_anchors_preset(PRESET_TOP_WIDE)
+		_titel_edit.margin_top = -_titel_offset
+		_titel_edit.margin_right = -close_button.rect_size.x
+		add_child(_titel_edit)
 
 func _add_resize_button() -> void:
 	_resize_button = Button.new()

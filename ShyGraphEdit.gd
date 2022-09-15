@@ -488,6 +488,9 @@ func _load_nodes() -> void:
 			dir.list_dir_end()
 	for node in get_children():
 		if node is ShyGraphNode:
+			for i in node.get_children():
+				if !i.owner:
+					i.queue_free()
 			node_menu.add_item(node.name)
 			nodes[node.name] = node
 			remove_child(node)
@@ -508,7 +511,7 @@ func _end_drag(to := {}) -> void:
 
 func _create_node_instance(node) -> ShyGraphNode:
 	if node is Node:
-		node = node.duplicate(4)
+		node = node.duplicate()
 	elif node is PackedScene:
 		node = node.instance()
 	elif node is Script:
