@@ -31,11 +31,10 @@ var transform := Transform2D.IDENTITY setget _set_offset; func _set_offset(new) 
 		emit_signal("transform_changed", transform)
 		update()
 var area_rect := Rect2() setget _set_area_rect; func _set_area_rect(new) -> void:
-		if new != area_rect:
-			area_rect = new
-			_update_bars()
-			update()
-			emit_signal("area_rect_changed")
+		area_rect = new
+		_update_bars()
+		update()
+		emit_signal("area_rect_changed")
 var bar_h: ScrollBar
 var bar_v: ScrollBar
 var undo := UndoRedo.new()
@@ -44,6 +43,7 @@ var undo := UndoRedo.new()
 # flow
 
 func _ready() -> void:
+	call_deferred("_set_area_to_rect")
 	if scroll_bar:
 		_add_scrooll_bars()
 	
@@ -73,8 +73,8 @@ func _draw() -> void:
 	_draw_grid()
 	if ruler:
 		_draw_ruler()
-	#draw_set_transform_matrix(transform.affine_inverse())
-	#draw_rect(area_rect, Color.green, false)
+	draw_set_transform_matrix(transform.affine_inverse())
+	draw_rect(area_rect, Color.green, false)
 
 
 # puplic
@@ -219,8 +219,12 @@ func _remove_scroll_bar() -> void:
 
 
 func _limit_transform_to_rect(old: Transform2D) -> Transform2D:
-	var offset = position_to_offset(rect_size, false)
-	old.origin = _get_nearest_point_in_rect(old.origin + offset, area_rect) - offset
+	var offset = position_to_offset(rect_size / 2, false).abs()
+	old.origin = _get_nearest_point_in_rect(
+			old.origin + offset,
+			area_rect.grow_individual(
+				offset.x, offset.y, offset.x, offset.y)
+			) - offset
 	return old
 
 
@@ -269,6 +273,11 @@ func _scale(scale_to) -> void:
 	var mouse_to = position_to_offset(get_local_mouse_position())
 	transform.origin += mouse_from - mouse_to
 	self.transform = transform
+
+
+func _set_area_to_rect() -> void:
+	self. area_rect = get_rect()
+
 
 
 # theme
