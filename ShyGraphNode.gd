@@ -74,6 +74,7 @@ func _init() -> void:
 	
 
 func _ready() -> void:
+	connect("renamed", self, "_on_node_renamed")
 	if get_parent().has_signal("transform_changed"):
 		get_parent().connect("transform_changed", self, "_on_parent_transform_changed")
 	self.offset = offset
@@ -311,12 +312,15 @@ func _on_titel_changed(_text := "") -> void:#todo  change to on text entered (fo
 		var old = name
 		name = text
 		_titel_edit.text = name
-		_titel_label.text = name
+		#_titel_label.text = name
 		emit_signal("rename", old, name)
 	_titel_label.visible = true
 	_titel_edit.visible = false
 	_titel_edit.release_focus()
 
+
+func _on_node_renamed() -> void:
+	_titel_label.text = name
 
 # private funcs----------------------------------------------------
 
