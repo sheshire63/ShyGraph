@@ -219,9 +219,10 @@ func _remove_scroll_bar() -> void:
 
 
 func _limit_transform_to_rect(old: Transform2D) -> Transform2D:
-	var offset = position_to_offset(rect_size / 2, false)
+	var offset = position_to_offset(rect_size, false)
 	old.origin = _get_nearest_point_in_rect(old.origin + offset, area_rect) - offset
 	return old
+
 
 func _add_scrooll_bars() -> void:
 	bar_v = VScrollBar.new()

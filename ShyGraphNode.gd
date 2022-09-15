@@ -306,7 +306,7 @@ func _copy(copy) -> void:#if you need to set somthing in the copy.
 
 # events
 
-func _on_titel_changed(_text := "") -> void:#todo  change to on text entered (focus lost)
+func _on_titel_changed(_text := "") -> void:
 	var text = _titel_edit.text.validate_node_name()
 	if text != "":
 		var old = name
