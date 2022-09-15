@@ -202,7 +202,7 @@ func init_drag(slot: Dictionary) -> void:
 
 
 func save_data() -> Dictionary:
-	var data = {"nodes": {}, "connections": connections}
+	var data = {"nodes": {}, "connections": connections, "transform": transform}
 	for child in get_children():
 		if child is ShyGraphNode:
 			data.nodes[child.name] = child.save_data()
@@ -213,9 +213,11 @@ func save_data() -> Dictionary:
 func load_data(data: Dictionary) -> void:
 	clear()
 	if data:
-		connections = data.connections
-		for i in data.nodes:
-			var node_data = data.nodes[i]
+		transform = data.get("transform", transform)
+		connections = data.get("connections", [])
+		var _nodes = data.get("nodes", {})
+		for i in _nodes:
+			var node_data = _nodes[i]
 			if node_data.type in nodes:
 				var node = _create_node_instance(nodes[node_data.type])
 				add_child(node, true)
