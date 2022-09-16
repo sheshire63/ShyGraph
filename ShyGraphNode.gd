@@ -1,5 +1,5 @@
 tool
-extends Control
+extends Container
 
 class_name ShyGraphNode
 
@@ -71,6 +71,7 @@ func _get_property_list() -> Array:
 
 func _init() -> void:
 	focus_mode = Control.FOCUS_CLICK
+	rect_min_size = Vector2(max(64.0, rect_min_size.x), max(64.0, rect_min_size.y))
 	
 
 func _ready() -> void:
@@ -110,7 +111,7 @@ func _notification(what: int) -> void:
 			for i in _slot_controls:
 				_slot_controls[i].update_position()
 			get_parent().update()
-		NOTIFICATION_ENTER_TREE, NOTIFICATION_RESIZED, NOTIFICATION_THEME_CHANGED, NOTIFICATION_VISIBILITY_CHANGED:
+		NOTIFICATION_SORT_CHILDREN:
 			update_min_size()
 
 
@@ -482,6 +483,7 @@ func _add_resize_button() -> void:
 	_resize_button.flat = true
 	_resize_button.icon = _get_resize_icon()
 	_resize_button.mouse_filter = MOUSE_FILTER_PASS
+	_resize_button.focus_mode = FOCUS_NONE
 	_resize_button.set_anchors_preset(PRESET_BOTTOM_RIGHT)
 	add_child(_resize_button)
 	_resize_button.margin_top = -_resize_button.rect_size.y
