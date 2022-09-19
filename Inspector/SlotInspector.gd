@@ -4,7 +4,6 @@ extends EditorInspectorPlugin
 class_name SlotInspectorPlugin
 
 
-# const InspectorControl = preload("res://addons/ShyGraph/SlotInspector.tscn")
 const ArrayEditorProperty = preload("res://addons/ShyGraph/Inspector/ArrayEditorProperty.gd")
 const SlotControl = preload("res://addons/ShyGraph/Inspector/SlotControl.tscn")
 
