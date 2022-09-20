@@ -23,10 +23,18 @@ enum ALLIGN {BEGIN, CENTER, END}
 enum SIDE {LEFT, RIGHT, TOP, BOTTOM}
 
 
-export var titel_bar := true
-export var close := true
-export var edit_title := true
-export var resize := true
+export var titel_bar := true setget _set_titel_bar; func _set_titel_bar(new) -> void:
+	titel_bar = new
+	_add_titel_bar()
+export var close := true setget _set_close; func _set_close(new) -> void:
+	close = new
+	_add_titel_bar()
+export var edit_title := true setget _set_edit_title; func _set_edit_title(new) -> void:
+	edit_title = new
+	_add_titel_bar()
+export var resize := true setget _set_resize; func _set_resize(new) -> void:
+	resize = new
+	_add_resize_button()
 
 var offset := Vector2.ZERO setget _set_offset; func _set_offset(new):
 		offset = new
@@ -48,6 +56,7 @@ var _moved_from: Vector2
 var _titel_label : Label
 var _titel_edit: LineEdit
 var _resize_button: Button
+var _close_button: Control
 var _titel_offset := 0.0
 
 
@@ -445,28 +454,28 @@ func _remove_slot_control(slot: int) -> void:
 
 
 func _add_titel_bar() -> void:
-	var close_button
+	_clear_titel_bar()
 	if close:
-		close_button = Button.new()
-		close_button.icon = _get_close_icon()
-		close_button.connect("pressed", self, "delete")
+		_close_button = Button.new()
+		_close_button.flat = true
+		_close_button.icon = _get_close_icon()
+		_close_button.connect("pressed", self, "delete")
 	else:
-		close_button = Control.new()
-	add_child(close_button)
+		_close_button = Control.new()
+	add_child(_close_button)
 
-	var control #todo check in inputif doublclick and in titel switch to lineedit
 	_titel_label = Label.new()
 	_titel_label.mouse_filter = MOUSE_FILTER_PASS
 	_titel_label.text = name
 	add_child(_titel_label)
 
-	_titel_offset = max(_titel_label.rect_size.y, close_button.rect_size.y)
-	close_button.set_anchors_preset(PRESET_TOP_RIGHT)
-	close_button.margin_top = -_titel_offset
-	close_button.margin_left = -close_button.rect_size.x
+	_titel_offset = max(_titel_label.rect_size.y, _close_button.rect_size.y)
+	_close_button.set_anchors_preset(PRESET_TOP_RIGHT)
+	_close_button.margin_top = -_titel_offset
+	_close_button.margin_left = -_close_button.rect_size.x
 	_titel_label.set_anchors_preset(PRESET_TOP_WIDE)
 	_titel_label.margin_top = -_titel_offset
-	_titel_label.margin_right = -close_button.rect_size.x
+	_titel_label.margin_right = -_close_button.rect_size.x
 
 	if edit_title:
 		_titel_edit = LineEdit.new()
@@ -475,10 +484,24 @@ func _add_titel_bar() -> void:
 		_titel_edit.visible = false
 		_titel_edit.set_anchors_preset(PRESET_TOP_WIDE)
 		_titel_edit.margin_top = -_titel_offset
-		_titel_edit.margin_right = -close_button.rect_size.x
+		_titel_edit.margin_right = -_close_button.rect_size.x
 		add_child(_titel_edit)
 
+
+func _clear_titel_bar() -> void:
+	if is_instance_valid(_titel_label):
+		remove_child(_titel_label)
+		_titel_label.queue_free()
+	if is_instance_valid(_titel_edit):
+		remove_child(_titel_edit)
+		_titel_edit.queue_free()
+	if is_instance_valid(_close_button):
+		remove_child(_close_button)
+		_close_button.queue_free()
+	
+
 func _add_resize_button() -> void:
+	_remove_resize_button()
 	_resize_button = Button.new()
 	_resize_button.flat = true
 	_resize_button.icon = _get_resize_icon()
@@ -488,6 +511,12 @@ func _add_resize_button() -> void:
 	add_child(_resize_button)
 	_resize_button.margin_top = -_resize_button.rect_size.y
 	_resize_button.margin_left = -_resize_button.rect_size.x
+
+
+func _remove_resize_button() -> void:
+	if is_instance_valid(_resize_button):
+		remove_child(_resize_button)
+		_resize_button.queue_free()
 
 
 func _resize(change := Vector2.ZERO) -> void:
