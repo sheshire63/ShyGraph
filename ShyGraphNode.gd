@@ -85,7 +85,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	connect("renamed", self, "_on_node_renamed")
-	if get_parent().has_signal("transform_changed"):
+	if get_parent().has_signal("transform_changed"): # todo this should be part of editor
 		get_parent().connect("transform_changed", self, "_on_parent_transform_changed")
 	self.offset = offset
 	if titel_bar:

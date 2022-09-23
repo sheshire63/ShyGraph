@@ -9,6 +9,7 @@ A Godot Plugin that adds a Custom Graph Edit
 - alligning the slots to child nodes or to the node itself
 - breaking connections via a break line
 - creating  nodes directly in the Editor
+- automatic node menu
 - undo redo
 - theme support
 - line types
