@@ -1,4 +1,4 @@
-tool 
+tool
 extends ShyCanvas
 
 
@@ -37,6 +37,7 @@ var types := [] setget _set_types; func _set_types(new) -> void:
 		update()
 		_update_nodes()
 export(line_types) var line_type := line_types.line
+export var custom_node_template: Script
 
 var node_menu := PopupMenu.new()
 var nodes := {}
@@ -225,7 +226,7 @@ func load_data(data: Dictionary) -> void:
 				node.name = i
 			else:
 				printerr("node type not found: %s"%(node_data.type))
-		
+
 
 func add_connection(from: Dictionary, to: Dictionary) -> void:
 	if !_is_connection_allowed(from, to):
@@ -473,7 +474,7 @@ func _draw_create_connection() -> void:
 func _load_nodes() -> void:
 	node_menu.clear()
 	nodes = {}
-	
+
 	if node_folder:
 		var dir := Directory.new()
 		if dir.open(node_folder):
@@ -516,7 +517,7 @@ func _create_node_instance(node) -> ShyGraphNode:
 		node = node.instance()
 	elif node is Script:
 		node = node.new()
-	
+
 	if not node is ShyGraphNode:
 		printerr("node is not a ShyGraphNode")
 		node = ShyGraphNode.new()
@@ -716,7 +717,7 @@ func _paste_nodes(data) -> void:
 	for conn in connections:
 		if conn.from.node in node_ref.keys() and conn.to.node in node_ref.keys():
 			conns.append(conn)
-	
+
 	undo.create_action("paste")
 	for i in node_ref:
 		var node = node_ref[i]

@@ -52,7 +52,7 @@ func add_buttons() -> void:
 	var base_control = get_editor_interface().get_base_control()
 	_create_add_node_dialog()
 	base_control.add_child(_add_node_dialog)
-	
+
 
 	new_node_button = Button.new()
 	new_node_button.icon = base_control.get_icon("Add", "EditorIcons")
@@ -67,7 +67,7 @@ func add_buttons() -> void:
 	load_nodes_button.connect("pressed", self, "laod_nodes_from_folder")
 	load_nodes_button.visible = false
 	add_control_to_container(CONTAINER_CANVAS_EDITOR_MENU, load_nodes_button)
-	
+
 	save_nodes_button = Button.new()
 	save_nodes_button.icon = base_control.get_icon("Save", "EditorIcons")
 	save_nodes_button.hint_tooltip = "Save Nodes to Node Folder"
@@ -125,7 +125,11 @@ func create_new_nodetype(name: String, add_script: bool) -> void:# todo add undo
 	if add_script:
 		var node_folder = object.node_folder
 		if node_folder:
-			var script = load("res://addons/ShyGraph/Inspector/NodeTemplate.gd")
+			var script: Script
+			if object.custom_node_template:
+				script = object.custom_node_template
+			else:
+				script = load("res://addons/ShyGraph/Inspector/NodeTemplate.gd")
 			var path = node_folder + "/" + new.name + ".gd"
 			script.resource_path = path
 			ResourceSaver.save(path, script)
