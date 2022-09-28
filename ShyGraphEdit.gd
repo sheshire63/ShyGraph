@@ -648,8 +648,13 @@ func _remove_connection(connection: Dictionary) -> void:
 			connections.erase(i)
 
 	_connection_removed(connection)
-	get_node(connection.from.node).emit_signal("disconnected", connection.from.slot, connection.to.node, connection.to.slot)
-	get_node(connection.to.node).emit_signal("disconnected", connection.to.slot, connection.from.node, connection.from.slot)
+	var from_node = get_node(connection.from.node)
+	var to_node = get_node(connection.to.node)
+	if from_node and to_node:
+		from_node.emit_signal("disconnected", connection.from.slot, connection.to.node, connection.to.slot)
+		to_node.emit_signal("disconnected", connection.to.slot, connection.from.node, connection.from.slot)
+	else:
+		printerr("node not found:", from_node, to_node)
 
 	update()
 
