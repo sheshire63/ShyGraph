@@ -17,13 +17,14 @@ const SIDES = {
 
 signal connected (from, to)
 signal disconnected (from, to)
-signal nodes_loaded
+signal node_types_loaded
 signal cleared
 signal node_added (node)#not called on load
 signal node_removed (node) #not called on clear
 signal nodes_moved (nodes)
 signal node_selected (node)
 signal node_deselected (node)
+signal node_created (node)
 
 
 
@@ -226,6 +227,7 @@ func load_data(data: Dictionary) -> void:
 				node.name = i
 			else:
 				printerr("node type not found: %s"%(node_data.type))
+	update()
 
 
 func add_connection(from: Dictionary, to: Dictionary) -> void:
@@ -495,7 +497,7 @@ func _load_nodes() -> void:
 			node_menu.add_item(node.name)
 			nodes[node.name] = node
 			remove_child(node)
-	emit_signal("nodes_loaded")
+	emit_signal("node_types_loaded")
 
 
 func _start_drag(from: Dictionary) -> void:
@@ -530,6 +532,7 @@ func _create_node_instance(node) -> ShyGraphNode:
 	node.connect("request_delete", self, "_on_node_delete", [node])
 	node.connect("_request_select", self, "_on_node_request_select")
 	node.connect("rename", self, "_on_node_renamed")
+	emit_signal("node_created", node)
 	return node
 
 
